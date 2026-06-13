@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const App = () => {
   const [task, setTask] = useState("");
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(() => {
+    const storedTasks = localStorage.getItem("tasks");
+
+    return storedTasks ? JSON.parse(storedTasks) : [];
+  });
   const completedTasks = tasks.filter((item) => item.complete).length;
 
   function addTask() {
@@ -37,6 +41,10 @@ const App = () => {
     });
     return setTasks(updatedTasks);
   }
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   return (
     <div>
