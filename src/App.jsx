@@ -10,6 +10,7 @@ const App = () => {
     return storedTasks ? JSON.parse(storedTasks) : [];
   });
   const completedTasks = tasks.filter((item) => item.complete).length;
+  const [filter, setFilter] = useState("all");
 
   function addTask() {
     if (!task.trim()) {
@@ -53,12 +54,24 @@ const App = () => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
+  const filteredTasks = tasks.filter((item) => {
+    if (filter === "active") {
+      return !item.complete;
+    }
+    if (filter === "completed") {
+      return item.complete;
+    }
+    return true;
+  });
+
   return (
     <div>
       <AddTaskForm task={task} setTask={setTask} addTask={addTask} />
-
+      <button onClick={() => setFilter("all")}>All</button>
+      <button onClick={() => setFilter("active")}>Active</button>
+      <button onClick={() => setFilter("completed")}>Completed</button>
       <ul>
-        {tasks.map((item) => (
+        {filteredTasks.map((item) => (
           <TodoItem
             key={item.id}
             item={item}
