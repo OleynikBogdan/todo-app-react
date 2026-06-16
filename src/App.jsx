@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import TodoItem from "./TodoItem";
+import AddTaskForm from "./AddTaskForm";
 
 const App = () => {
   const [task, setTask] = useState("");
@@ -39,7 +41,12 @@ const App = () => {
       }
       return item;
     });
-    return setTasks(updatedTasks);
+    setTasks(updatedTasks);
+  }
+
+  function clearCompletedTasks() {
+    const updatedTasks = tasks.filter((item) => !item.complete);
+    setTasks(updatedTasks);
   }
 
   useEffect(() => {
@@ -48,39 +55,22 @@ const App = () => {
 
   return (
     <div>
-      <input
-        type="text"
-        value={task}
-        onChange={(e) => setTask(e.target.value)}
-      />
-
-      <button onClick={addTask}> Add</button>
+      <AddTaskForm task={task} setTask={setTask} addTask={addTask} />
 
       <ul>
         {tasks.map((item) => (
-          <li
+          <TodoItem
             key={item.id}
-            style={{
-              textDecoration: item.complete ? "line-through" : "none",
-              opacity: item.complete ? 0.5 : 1,
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={item.complete}
-              onChange={() => {
-                toggleTask(item.id);
-              }}
-            />
-            {item.text}
-
-            <button onClick={() => deleteTask(item.id)}>Delete</button>
-          </li>
+            item={item}
+            toggleTask={toggleTask}
+            deleteTask={deleteTask}
+          />
         ))}
 
         <p>
           Completed {completedTasks} of {tasks.length} tasks
         </p>
+        <button onClick={clearCompletedTasks}>Clear Completed Tasks</button>
       </ul>
     </div>
   );
